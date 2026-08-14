@@ -28,15 +28,20 @@ npm run dev        # http://localhost:5173
 
 ## 배포 — GitHub Pages (로컬 설치 불필요)
 
-푸시하면 GitHub Actions가 알아서 빌드·배포합니다. 로컬에 Node나 npm이 없어도 되고,
-저장소 설정을 미리 건드릴 필요도 없습니다 — 워크플로의 `enablement: true`가 첫 실행 때
-Pages를 자동으로 켭니다.
+푸시하면 GitHub Actions가 알아서 빌드·배포합니다. 로컬에 Node나 npm은 필요 없습니다.
 
-`main` 또는 `claude/mobile-web-game-plan-z33pm2` 브랜치에 푸시할 때마다
+**단, 최초 1회는 저장소 설정에서 Pages를 켜야 합니다** (GitHub 웹에서 클릭 한 번):
+
+> **Settings → Pages → Build and deployment → Source: `GitHub Actions`**
+
+이 단계는 워크플로가 대신할 수 없습니다. Pages 사이트 생성은 저장소 admin 권한이 필요한데
+Actions의 `GITHUB_TOKEN`에는 그 권한이 없기 때문입니다. 설정을 켠 뒤에는
+Actions 탭에서 **Deploy to GitHub Pages → Run workflow**로 즉시 재실행하면 배포됩니다.
+
+이후 `main` 또는 `claude/mobile-web-game-plan-z33pm2` 브랜치에 푸시할 때마다
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)이 테스트 → 빌드 → 배포를 수행합니다.
-Actions 탭에서 **Deploy to GitHub Pages → Run workflow**로 수동 실행도 가능합니다.
 
-배포 주소: `https://<사용자명>.github.io/WebGame/`
+배포 주소: `https://minamisyou.github.io/WebGame/`
 
 하위 경로(`/WebGame/`) 배포를 전제로 모든 경로가 상대 경로(`base: './'`)이며,
 매니페스트·아이콘·서비스워커 스코프·오프라인 재접속까지 해당 경로에서 검증했습니다.

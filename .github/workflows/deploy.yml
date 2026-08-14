@@ -39,11 +39,11 @@ jobs:
       - name: Build
         run: npm run build
 
-      # enablement turns on Pages for the repository on the first run, so no
-      # manual step in repository settings is needed before deploying.
+      # Pages must already be enabled with "GitHub Actions" as the source.
+      # enablement: true is deliberately not used: creating a Pages site needs
+      # repository admin rights, which GITHUB_TOKEN does not have, and it fails
+      # with a far less obvious error than this action's own message.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
