@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover lets the board reach under the notch; the safe-area
+         insets in CSS keep the controls clear of it. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b0f1c" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="GRAVITON — 막혔을 때, 보드를 돌려버려라. 모바일 웹 회전 중력 퍼즐." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon-180.png" />
+    <title>GRAVITON</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Play screen -->
+      <main class="stage" id="stage" aria-label="GRAVITON">
+        <header class="hud">
+          <div class="hud-row">
+            <div class="stat">
+              <span class="stat-label" data-i18n="score">점수</span>
+              <strong class="stat-value" id="score">0</strong>
+            </div>
+            <div class="stat stat-mid" id="timer-stat" hidden>
+              <span class="stat-label" data-i18n="time">시간</span>
+              <strong class="stat-value" id="timer">60</strong>
+            </div>
+            <div class="stat stat-right">
+              <span class="stat-label" data-i18n="best">최고</span>
+              <strong class="stat-value" id="best">0</strong>
+            </div>
+            <button class="icon-btn" id="pause-btn" data-i18n-label="pause" aria-label="일시정지">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="6" y="5" width="4" height="14" rx="1.2" />
+                <rect x="14" y="5" width="4" height="14" rx="1.2" />
+              </svg>
+            </button>
+          </div>
+          <div class="hud-row hud-sub">
+            <div class="gauge" id="gauge" aria-live="polite">
+              <span class="gauge-label" data-i18n="rotations">회전</span>
+              <span class="gauge-dots" id="gauge-dots"></span>
+            </div>
+            <div class="chain-flash" id="chain-flash" aria-live="polite"></div>
+          </div>
+        </header>
+
+        <div class="board-wrap" id="board-wrap">
+          <canvas id="board" role="img" aria-label="GRAVITON board"></canvas>
+        </div>
+
+        <footer class="controls">
+          <button
+            class="rotate-btn"
+            id="rotate-ccw"
+            data-i18n-label="rotations"
+            aria-label="왼쪽으로 회전"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+          <div class="next" id="next">
+            <span class="next-label" data-i18n="next">다음</span>
+            <canvas id="next-canvas" width="120" height="120" aria-hidden="true"></canvas>
+          </div>
+          <button
+            class="rotate-btn"
+            id="rotate-cw"
+            data-i18n-label="rotations"
+            aria-label="오른쪽으로 회전"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 5V2l5 4-5 4V7a5 5 0 1 0 5 5h2a7 7 0 1 1-7-7Z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+        </footer>
+
+        <p class="hint" id="hint" aria-live="polite"></p>
+      </main>
+
+      <!-- Title screen -->
+      <section class="overlay" id="screen-title">
+        <div class="panel panel-title">
+          <h1 class="logo">GRAVITON</h1>
+          <p class="tagline" data-i18n="tagline">막혔을 때, 보드를 돌려버려라</p>
+          <div class="mode-list">
+            <button class="mode-btn" data-mode="endless">
+              <span class="mode-name" data-i18n="endless">엔들리스</span>
+              <span class="mode-desc" data-i18n="endlessDesc">기록에 도전</span>
+              <span class="mode-best" data-best="endless"></span>
+            </button>
+            <button class="mode-btn" data-mode="daily">
+              <span class="mode-name" data-i18n="daily">데일리</span>
+              <span class="mode-desc" data-i18n="dailyDesc">오늘의 시드</span>
+              <span class="mode-best" data-best="daily"></span>
+            </button>
+            <button class="mode-btn" data-mode="rush">
+              <span class="mode-name" data-i18n="rush">러시 60</span>
+              <span class="mode-desc" data-i18n="rushDesc">60초 최대 점수</span>
+              <span class="mode-best" data-best="rush"></span>
+            </button>
+          </div>
+          <button class="ghost-btn" id="resume-btn" hidden data-i18n="resume">이어하기</button>
+          <div class="title-links">
+            <button class="link-btn" id="rules-btn" data-i18n="howTo">규칙 보기</button>
+            <button class="link-btn" id="settings-btn" data-i18n="settings">설정</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pause -->
+      <section class="overlay" id="screen-pause" hidden>
+        <div class="panel">
+          <h2 data-i18n="paused">일시정지</h2>
+          <button class="primary-btn" id="pause-resume" data-i18n="resumeGame">계속하기</button>
+          <button class="ghost-btn" id="pause-restart" data-i18n="restart">다시하기</button>
+          <button class="link-btn" id="pause-quit" data-i18n="quit">그만두기</button>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="overlay" id="screen-over" hidden>
+        <div class="panel">
+          <h2 id="over-title" data-i18n="gameOver">게임 오버</h2>
+          <p class="best-flag" id="best-flag" hidden data-i18n="newBest">최고 기록 경신!</p>
+          <p class="final-score" id="final-score">0</p>
+          <dl class="result-grid">
+            <div><dt data-i18n="maxChain">최대 연쇄</dt><dd id="final-chain">0</dd></div>
+            <div><dt data-i18n="maxOrb">최고 오브</dt><dd id="final-orb">0</dd></div>
+            <div><dt data-i18n="best">최고</dt><dd id="final-best">0</dd></div>
+          </dl>
+          <button class="primary-btn" id="over-again" data-i18n="restart">다시하기</button>
+          <button class="ghost-btn" id="over-share" data-i18n="share">결과 공유</button>
+          <button class="link-btn" id="over-home" data-i18n="home">홈으로</button>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="overlay" id="screen-settings" hidden>
+        <div class="panel">
+          <h2 data-i18n="settings">설정</h2>
+          <ul class="settings-list">
+            <li>
+              <span data-i18n="sound">소리</span>
+              <button class="toggle" id="set-sound" role="switch" aria-checked="true"></button>
+            </li>
+            <li>
+              <span data-i18n="haptics">진동</span>
+              <button class="toggle" id="set-haptics" role="switch" aria-checked="true"></button>
+            </li>
+            <li>
+              <span data-i18n="reducedMotion">모션 줄이기</span>
+              <button class="toggle" id="set-motion" role="switch" aria-checked="false"></button>
+            </li>
+            <li>
+              <span data-i18n="palette">색약 팔레트</span>
+              <button class="toggle" id="set-palette" role="switch" aria-checked="false"></button>
+            </li>
+            <li>
+              <span data-i18n="handedness">주 사용 손</span>
+              <button class="segment" id="set-hand"></button>
+            </li>
+            <li>
+              <span data-i18n="language">언어</span>
+              <button class="segment" id="set-lang"></button>
+            </li>
+          </ul>
+          <button class="primary-btn" id="settings-close" data-i18n="close">닫기</button>
+        </div>
+      </section>
+
+      <!-- Rules -->
+      <section class="overlay" id="screen-rules" hidden>
+        <div class="panel">
+          <h2 data-i18n="rulesTitle">규칙</h2>
+          <ol class="rules-list" id="rules-list"></ol>
+          <button class="primary-btn" id="rules-close" data-i18n="close">닫기</button>
+        </div>
+      </section>
+
+      <div class="landscape-warn" data-i18n="landscapeWarn">세로 화면으로 돌려주세요</div>
+      <div class="toast" id="toast" hidden></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
