@@ -28,13 +28,11 @@ npm run dev        # http://localhost:5173
 
 ## 배포 — GitHub Pages (로컬 설치 불필요)
 
-푸시하면 GitHub Actions가 알아서 빌드·배포합니다. 로컬에 Node나 npm이 없어도 됩니다.
+푸시하면 GitHub Actions가 알아서 빌드·배포합니다. 로컬에 Node나 npm이 없어도 되고,
+저장소 설정을 미리 건드릴 필요도 없습니다 — 워크플로의 `enablement: true`가 첫 실행 때
+Pages를 자동으로 켭니다.
 
-**최초 1회만** 저장소 설정에서 Pages 소스를 지정하세요:
-
-> **Settings → Pages → Build and deployment → Source: `GitHub Actions`**
-
-이후에는 `main` 또는 `claude/mobile-web-game-plan-z33pm2` 브랜치에 푸시할 때마다
+`main` 또는 `claude/mobile-web-game-plan-z33pm2` 브랜치에 푸시할 때마다
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)이 테스트 → 빌드 → 배포를 수행합니다.
 Actions 탭에서 **Deploy to GitHub Pages → Run workflow**로 수동 실행도 가능합니다.
 

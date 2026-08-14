@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -39,7 +39,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # enablement turns on Pages for the repository on the first run, so no
+      # manual step in repository settings is needed before deploying.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
