@@ -26,7 +26,24 @@ npm run dev        # http://localhost:5173
 | `npm test` | 코어 로직 유닛 테스트 (38개) |
 | `node scripts/make-icons.mjs` | PWA 아이콘 PNG 재생성 |
 
-배포는 `dist/`를 정적 호스팅에 올리기만 하면 됩니다. 서버 없이 동작합니다.
+## 배포 — GitHub Pages (로컬 설치 불필요)
+
+푸시하면 GitHub Actions가 알아서 빌드·배포합니다. 로컬에 Node나 npm이 없어도 됩니다.
+
+**최초 1회만** 저장소 설정에서 Pages 소스를 지정하세요:
+
+> **Settings → Pages → Build and deployment → Source: `GitHub Actions`**
+
+이후에는 `main` 또는 `claude/mobile-web-game-plan-z33pm2` 브랜치에 푸시할 때마다
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)이 테스트 → 빌드 → 배포를 수행합니다.
+Actions 탭에서 **Deploy to GitHub Pages → Run workflow**로 수동 실행도 가능합니다.
+
+배포 주소: `https://<사용자명>.github.io/WebGame/`
+
+하위 경로(`/WebGame/`) 배포를 전제로 모든 경로가 상대 경로(`base: './'`)이며,
+매니페스트·아이콘·서비스워커 스코프·오프라인 재접속까지 해당 경로에서 검증했습니다.
+
+다른 정적 호스팅을 쓴다면 `dist/`를 그대로 올리면 됩니다. 서버 로직은 없습니다.
 
 ## 조작
 
